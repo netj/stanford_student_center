@@ -83,13 +83,13 @@ foreach($students as $stud) {
     }
 }
 
-function lateDisplay($lateVal) {
+function lateDisplay($lateVal, $datetime) {
 	if($lateVal === "0") {
-		return "<span class=\"label label-success\">Received</span>";
+		return "<span class=\"label label-success\" title=\"$datetime\">Received</span>";
 	} elseif ($lateVal === "") {
-		return "<span class=\"label label-info\">Not Received</span>";
+		return "<span class=\"label label-info\" title=\"$datetime\">Not Received</span>";
 	} else {
-		return "<span class=\"label label-warning\">Turned in Late ($lateVal hours)</span>";
+		return "<span class=\"label label-warning\" title=\"$datetime\">Turned in Late ($lateVal hours)</span>";
 	}
 }
 
@@ -125,12 +125,6 @@ function coverDisplay($coverVal) {
 <nav class="navbar navbar-default" role="navigation" style="background: 0; border: 0; margin-bottom: 0;">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
     <a class="navbar-brand" href="#" style="padding-left: 0;"><strong><?php echo $className." ".$termName; ?></strong> Student Center</a>
   </div>
 
@@ -218,12 +212,12 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         <?php if ($student["rm_total"] != "") { ?>
                         <tr>
                             <td><big><strong>RM</strong></big></td>
-                            <td><?php echo lateDisplay($student["rm_latehours"]); ?></td>
+                            <td><?php echo lateDisplay($student["rm_latehours"], $student["rm_submitted"]); ?></td>
                             <td><a class="btn btn-default" href="results/<?php echo $student["sunetid"]; ?>/rm.html">Details</a></td>
-                            <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br> (<?php echo $student["rm_functionality"]; ?>)</td>
-                            <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br> (<?php echo $student["rm_robustness"]   ; ?>)</td>
-                            <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br> (<?php echo $student["rm_documentation"]; ?>)</td>
-                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br> (<?php echo $student["rm_design"]       ; ?>)</td>
+                            <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["rm_functionality"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["rm_robustness"]   ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["rm_documentation"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br><small class="text-muted">(<?php echo $student["rm_design"]       ; ?>)</small></td>
                             <td class="total"><big><strong><?php echo $student["rm_total"]; ?></strong>/<?php echo $fullscore["rm_total_raw"]; ?></big></td>
                             <td><?php echo $student["rm_penalty"]; ?></td>
                             <td><?php echo $student["rm_lateperiod_used"]; ?></td>
