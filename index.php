@@ -87,9 +87,9 @@ function lateDisplay($lateVal, $datetime) {
 	if($lateVal === "0") {
 		return "<span class=\"label label-success\" title=\"$datetime\">Received</span>";
 	} elseif ($lateVal === "") {
-		return "<span class=\"label label-info\" title=\"$datetime\">Not Received</span>";
+		return "<span class=\"label label-danger\" title=\"$datetime\">Not Received</span>";
 	} else {
-		return "<span class=\"label label-warning\" title=\"$datetime\">Turned in Late ($lateVal hours)</span>";
+		return "<span class=\"label label-warning\" title=\"$datetime\">Turned in Late</span> <br> <span class=\"label label-warning\" title=\"$datetime\">($lateVal hours)</span>";
 	}
 }
 
@@ -198,10 +198,9 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                             <th>Functionality</th>
                             <th>Robustness</th>
                             <th>Documentation</th>
-                            <th>Design</th>
+                            <th>Design/Correctness</th>
                             <th class="total"><big>Total</big></th>
-                            <th>Late Penalty</th>
-                            <th>Late Hours Used</th>
+                            <th>Late Penalty, Hours Used</th>
                             <th class="stat">Class Average</th>
                             <th class="stat">Class StDev.</th>
                             <th class="stat">Class Median</th>
@@ -213,14 +212,14 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         <tr>
                             <td><big><strong>RM</strong></big></td>
                             <td><?php echo lateDisplay($student["rm_latehours"], $student["rm_submitted"]); ?></td>
-                            <td><a class="btn btn-default" href="results/<?php echo $student["sunetid"]; ?>/rm.html">Details</a></td>
+                            <td><a class="btn btn-sm btn-default" href="results/<?php echo $student["sunetid"]; ?>/rm.html">Details</a></td>
                             <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["rm_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["rm_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["rm_documentation"]; ?>)</small></td>
-                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br><small class="text-muted">(<?php echo $student["rm_design"]       ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br><small class="text-muted">(<?php echo $student["rm_design"]       ; ?>)</small>
+                                                                                                                                                                                                   <br><small><?php echo $student["rm_comment"]; ?></td>
                             <td class="total"><big><strong><?php echo $student["rm_total"]; ?></strong>/<?php echo $fullscore["rm_total_raw"]; ?></big></td>
-                            <td><?php echo $student["rm_penalty"]; ?></td>
-                            <td><?php echo $student["rm_lateperiod_used"]; ?></td>
+                            <td><?php echo $student["rm_penalty"]; ?>, <?php echo $student["rm_lateperiod_used"]; ?>hrs</td>
                             <td class="stat"><?php echo number_format($averageStats["rm_total"], 2); ?></td>
                             <td class="stat"><?php echo number_format($stdevStats["rm_total"]  , 2); ?></td>
                             <td class="stat"><?php echo number_format($medianStats["rm_total"] , 2); ?></td>
