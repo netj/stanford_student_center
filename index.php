@@ -1,7 +1,7 @@
 <!--
 \\
 \\ Student Center
-\\ SŽbastien Robaszkiewicz
+\\ SÂŽbastien Robaszkiewicz
 \\ Justin Cheng
 \\ Mike Chrzanowski
 \\ 2014
@@ -66,6 +66,9 @@ foreach($students as $stud) {
     if ($sunetid == $webAuthUser) {
         $student = $stud;
     }
+    if ($stud["sunetid"] == "0_class_fullscore") {
+        $fullscore = $stud;
+    }
     if ($stud["sunetid"] == "0_class_avg") {
         $averageStats = $stud;
     }
@@ -80,21 +83,13 @@ foreach($students as $stud) {
     }
 }
 
-function lateDisplayHW0($lateVal) {
-	if($lateVal === "1") {
-		return "<span class=\"label label-success\">Received</span>";
-	} else {
-		return "<span class=\"label label-info\">Not Received</span>";
-	}
-}
-
 function lateDisplay($lateVal) {
 	if($lateVal === "0") {
 		return "<span class=\"label label-success\">Received</span>";
 	} elseif ($lateVal === "") {
 		return "<span class=\"label label-info\">Not Received</span>";
 	} else {
-		return "<span class=\"label label-warning\">Turned in Late</span>";
+		return "<span class=\"label label-warning\">Turned in Late ($lateVal hours)</span>";
 	}
 }
 
@@ -173,7 +168,7 @@ Please contact us</a> if you think this is a mistake.</h2>
         <div class="span12">
 			<h2>Hi, <strong><?php echo $student["first_name"] . " " . $student["last_name"]; ?></strong>!</h2>
 <?php { ?>
-Check out your grades, as well as late periods used. If there are any discrepancies between your actual and recorded grades, <a href="mailto:<?php echo $staffEmail; ?>?Subject=[CS246 Student Center] Grade discrepancy for <?php echo $webAuthUser; ?>">contact us</a>!
+Check out your grades, as well as late periods used. If there are any discrepancies between your actual and recorded grades, <a href="mailto:<?php echo $staffEmail; ?>?Subject=[<?php echo $className; ?> Student Center] Grade discrepancy for <?php echo $webAuthUser; ?>">contact us</a>!
 <?php } ?>
         </div>
     </div>
@@ -184,13 +179,14 @@ Check out your grades, as well as late periods used. If there are any discrepanc
         <div class="span12">
 		<h3>Late Periods</h3>
             <?php
-            $late_days = $student["late_days"] + $student["hw3_late_days"];
-            if ($late_days == 0) {$alertType = "alert-success"; $alertMessage = "Yay!";}
-            else if ($late_days == 1) {$alertType = "alert-info"; $alertMessage = "Heads-up!";}
-            else if ($late_days == 2) {$alertType = "alert-warning"; $alertMessage = "Warning!";}
+            $late_hours = $student["lateperiod_used"];
+            if ($late_hours == 0)       {$alertType = "alert-success"; $alertMessage = "Yay!";}
+            else if ($late_hours <= 24) {$alertType = "alert-info";    $alertMessage = "Heads-up!";}
+            else if ($late_hours <= 60) {$alertType = "alert-warning"; $alertMessage = "Warning!";}
+            else                        {$alertType = "alert-danger";  $alertMessage = "Warning!";}
             ?>
-            <div class="alert <?php echo $alertType; ?>" >
-                <strong><?php echo $alertMessage ?></strong> You have used <strong><?php echo $late_days ?></strong> out of your 2 allowed late periods.
+            <div class="alert alert-block <?php echo $alertType; ?>" >
+                <strong><?php echo $alertMessage ?></strong> You have used <strong><?php echo $late_hours ?></strong> out of your allowed 60 late hours.
             </div>
         </div>
     </div>
@@ -198,212 +194,43 @@ Check out your grades, as well as late periods used. If there are any discrepanc
     <div class="row-fluid">
         <div class="span12">
             <div class="hero-unit">
-                <h3>Homework</h3>
+                <h3>Project</h3>
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th></th>
+                            <th>Part</th>
                             <th>Status</th>
-                            <th>Cover?</th>
-                            <th>Q1</th>
-                            <th>Q2</th>
-                            <th>Q3</th>
-                            <th>Q4</th>
-                            <th class="total">Total</th>
-                            <th class="stat">Avg.</th>
-                            <th class="stat">Max</th>
-                            <th class="stat">StDev.</th>
-                            <th class="stat">Med.</th>
+                            <th>Test Result</th>
+                            <th>Functionality</th>
+                            <th>Robustness</th>
+                            <th>Documentation</th>
+                            <th>Design</th>
+                            <th class="total"><big>Total</big></th>
+                            <th>Late Penalty</th>
+                            <th>Late Hours Used</th>
+                            <th class="stat">Class Average</th>
+                            <th class="stat">Class StDev.</th>
+                            <th class="stat">Class Median</th>
+                            <th class="stat">Class Max</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($student["hw0_total"] != "") { ?>
+                        <?php if ($student["rm_total"] != "") { ?>
                         <tr>
-                            <td><strong>HW0</strong></td>
-                            <td><strong><?php echo lateDisplayHW0($student["hw0_total"]); ?></strong></td>
-                            <td><strong>--</strong></td>
-                            <td><strong>--</strong></td>
-                            <td><strong>--</strong></td>
-                            <td><strong>--</strong></td>
-                            <td><strong>--</strong></td>
-                            <td class="total"><strong><?php echo intval($student["hw0_total"]) * 100; ?></strong>/100</td>
-                            <td class="stat"><?php echo number_format($averageStats["hw0_total"] * 100,0); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["hw0_total"] * 100,0); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["hw0_total"] * 100,0); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["hw0_total"] * 100,0); ?></td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["hw1_total"] != "") { ?>
-                        <tr>
-                            <td><strong>HW1</strong></td>
-                            <td><?php echo lateDisplay($student["hw1_latedays"]); ?></td>
-                            <td><?php echo coverDisplay($student["hw1_nocover"]); ?></td>
-                            <td><strong><?php echo $student["hw1_q1"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw1_q2"]; ?></strong>/30</td>
-                            <td><strong><?php echo $student["hw1_q3"]; ?></strong>/15</td>
-                            <td><strong><?php echo $student["hw1_q4"]; ?></strong>/30</td>
-                            <td class="total"><strong><?php echo $student["hw1_total"]; ?></strong>/100</td>
-                            <td class="stat"><?php echo number_format($averageStats["hw1_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["hw1_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["hw1_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["hw1_total"],0); ?></td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["hw2_total"] != "") { ?>
-                        <tr>
-                            <td><strong>HW2</strong></td>
-                            <td><?php echo lateDisplay($student["hw2_latedays"]); ?></td>
-                            <td><?php echo coverDisplay($student["hw2_nocover"]); ?></td>
-                            <td><strong><?php echo $student["hw2_q1"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw2_q2"]; ?></strong>/25+5</td>
-                            <td><strong><?php echo $student["hw2_q3"]; ?></strong>/20</td>
-                            <td><strong><?php echo $student["hw2_q4"]; ?></strong>/30</td>
-                            <td class="total"><strong><?php echo $student["hw2_total"]; ?></strong>/100</td>
-                            <td class="stat"><?php echo number_format($averageStats["hw2_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["hw2_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["hw2_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["hw2_total"],0); ?></td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["hw3_total"] != "") { ?>
-                        <tr>
-                            <td><strong>HW3</strong></td>
-                            <td><?php echo lateDisplay($student["hw3_latedays"]); ?></td>
-                            <td><?php echo coverDisplay($student["hw3_nocover"]); ?></td>
-                            <td><strong><?php echo $student["hw3_q1"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw3_q2"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw3_q3"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw3_q4"]; ?></strong>/25</td>
-                            <td class="total"><strong><?php echo $student["hw3_total"]; ?></strong>/100</td>
-                            <td class="stat"><?php echo number_format($averageStats["hw3_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["hw3_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["hw3_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["hw3_total"],0); ?></td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["hw4_total"] != "") { ?>
-                        <tr>
-                            <td><strong>HW4</strong></td>
-                            <td><?php echo lateDisplay($student["hw4_latedays"]); ?></td>
-                            <td><?php echo coverDisplay($student["hw4_nocover"]); ?></td>
-                            <td><strong><?php echo $student["hw4_q1"]; ?></strong>/25</td>
-                            <td><strong><?php echo $student["hw4_q2"]; ?></strong>/20</td>
-                            <td><strong><?php echo $student["hw4_q3"]; ?></strong>/20</td>
-                            <td><strong><?php echo $student["hw4_q4"]; ?></strong>/35</td>
-                            <td class="total"><strong><?php echo $student["hw4_total"]; ?></strong>/100</td>
-                            <td class="stat"><?php echo number_format($averageStats["hw4_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["hw4_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["hw4_total"],0); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["hw4_total"],0); ?></td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if ($showGradiance) { ?>
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="hero-unit">
-                <h3>Gradiance Quizzes</h3>
-                <table class="table table-hover table-bordered table-striped">                    
-                    <tbody>
-                        <?php if ($student["gradiance0"] != "") { ?>
-                        <tr>
-                            <td><strong>MapReduce</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance0"]; ?></strong>/9</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance1"] != "") { ?>
-                        <tr>
-                            <td><strong>Association Rules</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance1"]; ?></strong>/15</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance2"] != "") { ?>
-                        <tr>
-                            <td><strong>LSH: Locality Sensitive Hashing</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance2"]; ?></strong>/15</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance3"] != "") { ?>
-                        <tr>
-                            <td><strong>SVD and Clustering</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance3"]; ?></strong>/15</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance4"] != "") { ?>
-                        <tr>
-                            <td><strong>Recommendation Systems</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance4"]; ?></strong>/9</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance5"] != "") { ?>
-                        <tr>
-                            <td><strong>PageRank</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance5"]; ?></strong>/15</td>
-                        </tr>
-                        <?php } ?>
-                        
-                        <?php if ($student["gradiance6"] != "") { ?>
-                        <tr>
-                            <td><strong>Analysis of Graphs</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance6"]; ?></strong>/12</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance7"] != "") { ?>
-                        <tr>
-                            <td><strong>Machine Learning</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance7"]; ?></strong>/12</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance8"] != "") { ?>
-                        <tr>
-                            <td><strong>Data Streams</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance8"]; ?></strong>/15</td>
-                        </tr>
-                        <?php } ?>
-                        <?php if ($student["gradiance9"] != "") { ?>
-                        <tr>
-                            <td><strong>Advertising</strong></td>
-                            <td class="total"><strong><?php echo $student["gradiance9"]; ?></strong>/12</td>
-                        </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-<?php } ?>
-
-<?php if ($showFinalExam) {?>
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="hero-unit">
-                <h2>Final Exam</h2>
-                <table class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th class="total">Total</th>
-                            <th class="stat">Avg.</th>
-                            <th class="stat">Max</th>
-                            <th class="stat">StDev.</th>
-                            <th class="stat">Med.</th>
-                        </tr>
-                    </thead>
-                    <tbody> 
-                        <?php if ($student["final_total"] != "") { ?>
-                        <tr>
-                            <td style="font-size: 26px"><strong>Final Exam</strong></td>
-                            <td class="total"><strong><?php echo $student["final_total"]; ?></strong>/180</td>
-                            <td class="stat"><?php echo number_format($averageStats["final_total"],2); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["final_total"],2); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["final_total"],2); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["final_total"],2); ?></td>
+                            <td><big><strong>RM</strong></big></td>
+                            <td><?php echo lateDisplay($student["rm_latehours"]); ?></td>
+                            <td><a class="btn btn-default" href="results/<?php echo $student["sunetid"]; ?>/rm.html">Details</a></td>
+                            <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br> (<?php echo $student["rm_functionality"]; ?>)</td>
+                            <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br> (<?php echo $student["rm_robustness"]   ; ?>)</td>
+                            <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br> (<?php echo $student["rm_documentation"]; ?>)</td>
+                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br> (<?php echo $student["rm_design"]       ; ?>)</td>
+                            <td class="total"><big><strong><?php echo $student["rm_total"]; ?></strong>/<?php echo $fullscore["rm_total_raw"]; ?></big></td>
+                            <td><?php echo $student["rm_penalty"]; ?></td>
+                            <td><?php echo $student["rm_lateperiod_used"]; ?></td>
+                            <td class="stat"><?php echo number_format($averageStats["rm_total"], 2); ?></td>
+                            <td class="stat"><?php echo number_format($stdevStats["rm_total"]  , 2); ?></td>
+                            <td class="stat"><?php echo number_format($medianStats["rm_total"] , 2); ?></td>
+                            <td class="stat"><?php echo number_format($maxStats["rm_total"]    , 2); ?></td>
                         </tr>
                         <?php } ?>
                     </tbody>
@@ -418,7 +245,8 @@ Check out your grades, as well as late periods used. If there are any discrepanc
 <hr />
 <footer class="footer">
 <?php { ?>
-	<p><small>Summary statistics are rounded to the nearest integer, and are calculated based on students who have handed in their work. Naturally, they are subject to change. If you didn't submit your assignment with a cover sheet, 2 points will be deducted from the total score. If you exceeded your number of late days, your assignments may be penalized 50%.</small></p>
+	<p><small>
+</small></p>
 <?php } ?>
     <p><small><a href="<?php echo $classWebsite; ?>">Back to <?php echo $className." ".$termName; ?></a></small></p>
 </footer>
