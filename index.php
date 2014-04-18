@@ -84,10 +84,10 @@ foreach($students as $stud) {
 }
 
 function lateDisplay($lateVal, $datetime) {
-	if($lateVal === "0") {
-		return "<span class=\"label label-success\" title=\"$datetime\">Received</span>";
-	} elseif ($lateVal === "") {
+	if($lateVal === "" or $datetime === "") {
 		return "<span class=\"label label-danger\" title=\"$datetime\">Not Received</span>";
+	} elseif($lateVal === "0") {
+		return "<span class=\"label label-success\" title=\"$datetime\">Received</span>";
 	} else {
 		return "<span class=\"label label-warning\" title=\"$datetime\">Turned in Late</span> <br> <span class=\"label label-warning\" title=\"$datetime\">($lateVal hours)</span>";
 	}
@@ -176,7 +176,7 @@ Check out your grades, as well as late periods used. If there are any discrepanc
             $late_hours = $student["lateperiod_used"];
             if ($late_hours == 0)       {$alertType = "alert-success"; $alertMessage = "Yay!";}
             else if ($late_hours <= 24) {$alertType = "alert-info";    $alertMessage = "Heads-up!";}
-            else if ($late_hours <= 60) {$alertType = "alert-warning"; $alertMessage = "Warning!";}
+            else if ($late_hours < 60)  {$alertType = "alert-warning"; $alertMessage = "Warning!";}
             else                        {$alertType = "alert-danger";  $alertMessage = "Warning!";}
             ?>
             <div class="alert alert-block <?php echo $alertType; ?>" >
@@ -194,13 +194,12 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         <tr>
                             <th>Part</th>
                             <th>Status</th>
-                            <th>Test Result</th>
                             <th>Functionality</th>
                             <th>Robustness</th>
                             <th>Documentation</th>
                             <th>Design/Correctness</th>
-                            <th class="total"><big>Total</big></th>
                             <th>Late Penalty, Hours Used</th>
+                            <th class="total"><big>Total</big></th>
                             <th class="stat">Class Average</th>
                             <th class="stat">Class StDev.</th>
                             <th class="stat">Class Median</th>
@@ -210,20 +209,29 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                     <tbody>
                         <?php if ($student["rm_total"] != "") { ?>
                         <tr>
-                            <td><big><strong>RM</strong></big></td>
-                            <td><?php echo lateDisplay($student["rm_latehours"], $student["rm_submitted"]); ?></td>
-                            <td><a class="btn btn-sm btn-default" href="results/<?php echo $student["sunetid"]; ?>/rm.html">Details</a></td>
+                            <td rowspan="2"><big><strong>RM</strong></big></td>
+                            <td rowspan="2"><?php echo lateDisplay($student["rm_latehours"], $student["rm_submitted"]); ?></td>
                             <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["rm_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["rm_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["rm_documentation"]; ?>)</small></td>
-                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br><small class="text-muted">(<?php echo $student["rm_design"]       ; ?>)</small>
-                                                                                                                                                                                                   <br><small><?php echo $student["rm_comment"]; ?></td>
+                            <td><strong><?php echo number_format($student["rm_design"]        /100 * $fullscore["rm_design"]       , 2); ?></strong>/<?php echo $fullscore["rm_design"];        ?> <br><small class="text-muted">(<?php echo $student["rm_design"]       ; ?>)</small></td>
+                            <td class="text-warning"><?php echo $student["rm_penalty"]; ?>, <?php echo $student["rm_lateperiod_used"]; ?>hrs</td>
                             <td class="total"><big><strong><?php echo $student["rm_total"]; ?></strong>/<?php echo $fullscore["rm_total_raw"]; ?></big></td>
-                            <td><?php echo $student["rm_penalty"]; ?>, <?php echo $student["rm_lateperiod_used"]; ?>hrs</td>
-                            <td class="stat"><?php echo number_format($averageStats["rm_total"], 2); ?></td>
-                            <td class="stat"><?php echo number_format($stdevStats["rm_total"]  , 2); ?></td>
-                            <td class="stat"><?php echo number_format($medianStats["rm_total"] , 2); ?></td>
-                            <td class="stat"><?php echo number_format($maxStats["rm_total"]    , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($averageStats["rm_total"], 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($stdevStats["rm_total"]  , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($medianStats["rm_total"] , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($maxStats["rm_total"]    , 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                <?php if ($student["rm_submitted"] !== "") { ?>
+                                    <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/rm.html">
+                                        Open Test Result Details</a>
+                                <?php } ?>
+                            </td>
+                            <td colspan="4">
+                                <?php echo $student["rm_comment"]; ?>
+                            </td>
                         </tr>
                         <?php } ?>
                     </tbody>
