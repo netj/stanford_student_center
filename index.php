@@ -223,10 +223,10 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                             <td rowspan="2" class="stat"><?php echo number_format($maxStats["rm_total"]    , 2); ?></td>
                         </tr>
                         <tr>
-                            <td colspan="2" class="text-center">
+                            <td colspan="2" class="text-center" style="vertical-align:middle;">
                                 <?php if ($student["rm_submitted"] !== "") { ?>
                                     <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/rm.html">
-                                        Open Test Result Details</a>
+                                        Open TA Test Report</a>
                                 <?php } ?>
                             </td>
                             <td colspan="4">
