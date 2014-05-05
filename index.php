@@ -239,6 +239,49 @@ Check out your grades, as well as late periods used. If there are any discrepanc
             </div>
         </div>
     </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="hero-unit">
+                <h3>Quiz</h3>
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Score</th>
+                            <th class="stat">Class Average</th>
+                            <th class="stat">Class StDev.</th>
+                            <th class="stat">Class Median</th>
+                            <th class="stat">Class Max</th>
+                            <th></th>
+                            <th>Bonus</th>
+                            <th class="stat">Class Average</th>
+                            <th class="stat">Class StDev.</th>
+                            <th class="stat">Class Median</th>
+                            <th class="stat">Class Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($student["quiz"] != "") { ?>
+                        <tr>
+                            <td><big><strong><?php echo $student["quiz"]; ?></strong>/<?php echo $fullscore["quiz"]; ?></big></td>
+                            <td class="stat"><?php echo number_format($averageStats["quiz"], 2); ?></td>
+                            <td class="stat"><?php echo number_format($stdevStats["quiz"]  , 2); ?></td>
+                            <td class="stat"><?php echo number_format($medianStats["quiz"] , 2); ?></td>
+                            <td class="stat"><?php echo number_format($maxStats["quiz"]    , 2); ?></td>
+                            <td></td>
+                            <td><big><strong><?php echo $student["quiz_bonus"]; ?></strong>/<?php echo $fullscore["quiz_bonus"]; ?></big></td>
+                            <td class="stat"><?php echo number_format($averageStats["quiz_bonus"], 2); ?></td>
+                            <td class="stat"><?php echo number_format($stdevStats["quiz_bonus"]  , 2); ?></td>
+                            <td class="stat"><?php echo number_format($medianStats["quiz_bonus"] , 2); ?></td>
+                            <td class="stat"><?php echo number_format($maxStats["quiz_bonus"]    , 2); ?></td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 <?php } ?>
 
 <?php } ?>
