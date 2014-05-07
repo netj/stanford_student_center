@@ -88,8 +88,11 @@ function lateDisplay($lateVal, $datetime) {
 		return "<span class=\"label label-danger\" title=\"$datetime\">Not Received</span>";
 	} elseif($lateVal === "0") {
 		return "<span class=\"label label-success\" title=\"$datetime\">Received</span>";
-	} else {
+	} elseif($lateVal > 0) {
 		return "<span class=\"label label-warning\" title=\"$datetime\">Turned in Late</span> <br> <span class=\"label label-warning\" title=\"$datetime\">($lateVal hours)</span>";
+	} else {
+                $lateVal = -$lateVal;
+		return "<span class=\"label label-success\" title=\"$datetime\">Turned in Early!</span> <br> <span class=\"label label-success\" title=\"$datetime\">($lateVal hours)</span>";
 	}
 }
 
@@ -207,6 +210,7 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         </tr>
                     </thead>
                     <tbody>
+
                         <?php if ($student["rm_total"] != "") { ?>
                         <tr>
                             <td rowspan="2"><big><strong>RM</strong></big></td>
@@ -229,9 +233,33 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                         Open TA Test Report</a>
                                 <?php } ?>
                             </td>
-                            <td colspan="4">
-                                <?php echo $student["rm_comment"]; ?>
+                            <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["rm_comment"]; ?></td>
+                        </tr>
+                        <?php } ?>
+
+                        <?php if ($student["ix_total"] != "") { ?>
+                        <tr>
+                            <td rowspan="2"><big><strong>IX</strong></big></td>
+                            <td rowspan="2"><?php echo lateDisplay($student["ix_latehours"], $student["ix_submitted"]); ?></td>
+                            <td><strong><?php echo number_format($student["ix_functionality"] /100 * $fullscore["ix_functionality"], 2); ?></strong>/<?php echo $fullscore["ix_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["ix_functionality"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ix_robustness"]    /100 * $fullscore["ix_robustness"]   , 2); ?></strong>/<?php echo $fullscore["ix_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["ix_robustness"]   ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ix_documentation"] /100 * $fullscore["ix_documentation"], 2); ?></strong>/<?php echo $fullscore["ix_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["ix_documentation"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ix_design"]        /100 * $fullscore["ix_design"]       , 2); ?></strong>/<?php echo $fullscore["ix_design"];        ?> <br><small class="text-muted">(<?php echo $student["ix_design"]       ; ?>)</small></td>
+                            <td class="text-warning"><?php echo $student["ix_penalty"]; ?>, <?php echo $student["ix_lateperiod_used"]; ?>hrs</td>
+                            <td class="total"><big><strong><?php echo $student["ix_total"]; ?></strong>/<?php echo $fullscore["ix_total_raw"]; ?></big></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($averageStats["ix_total"], 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($stdevStats["ix_total"]  , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($medianStats["ix_total"] , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($maxStats["ix_total"]    , 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center" style="vertical-align:middle;">
+                                <?php if ($student["ix_submitted"] !== "") { ?>
+                                    <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/ix.html">
+                                        Open TA Test Report</a>
+                                <?php } ?>
                             </td>
+                            <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["ix_comment"]; ?></td>
                         </tr>
                         <?php } ?>
                     </tbody>
