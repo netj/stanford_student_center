@@ -262,6 +262,32 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["ix_comment"]; ?></td>
                         </tr>
                         <?php } ?>
+
+                        <?php if ($student["sm_total"] != "") { ?>
+                        <tr>
+                            <td rowspan="2"><big><strong>SM</strong></big></td>
+                            <td rowspan="2"><?php echo lateDisplay($student["sm_latehours"], $student["sm_submitted"]); ?></td>
+                            <td><strong><?php echo number_format($student["sm_functionality"] /100 * $fullscore["sm_functionality"], 2); ?></strong>/<?php echo $fullscore["sm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["sm_functionality"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["sm_robustness"]    /100 * $fullscore["sm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["sm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["sm_robustness"]   ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["sm_documentation"] /100 * $fullscore["sm_documentation"], 2); ?></strong>/<?php echo $fullscore["sm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["sm_documentation"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["sm_design"]        /100 * $fullscore["sm_design"]       , 2); ?></strong>/<?php echo $fullscore["sm_design"];        ?> <br><small class="text-muted">(<?php echo $student["sm_design"]       ; ?>)</small></td>
+                            <td class="text-warning"><?php echo $student["sm_penalty"]; ?>, <?php echo $student["sm_lateperiod_used"]; ?>hrs</td>
+                            <td class="total"><big><strong><?php echo $student["sm_total"]; ?></strong>/<?php echo $fullscore["sm_total_raw"]; ?></big></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($averageStats["sm_total"], 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($stdevStats["sm_total"]  , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($medianStats["sm_total"] , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($maxStats["sm_total"]    , 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center" style="vertical-align:middle;">
+                                <?php if ($student["sm_submitted"] !== "") { ?>
+                                    <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/sm.html">
+                                        Open TA Test Report</a>
+                                <?php } ?>
+                            </td>
+                            <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["sm_comment"]; ?></td>
+                        </tr>
+                        <?php } ?>
                     </tbody>
                 </table>
             </div>
