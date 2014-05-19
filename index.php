@@ -288,6 +288,15 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["sm_comment"]; ?></td>
                         </tr>
                         <?php } ?>
+
+                        <?php if ($student["ex_proposal_feedback"] != "") { ?>
+                        <tr>
+                            <td rowspan="1"><big><strong>EX</strong></big></td>
+                            <td colspan="1" class="text-center" style="vertical-align:top;"><strong>Proposal Feedback</strong></td>
+                            <td colspan="10" style="white-space:pre-wrap;"><?php echo $student["ex_proposal_feedback"]; ?></td>
+                        </tr>
+                        <?php } ?>
+
                     </tbody>
                 </table>
             </div>
