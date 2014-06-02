@@ -289,6 +289,32 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         </tr>
                         <?php } ?>
 
+                        <?php if ($student["ql_total"] != "") { ?>
+                        <tr>
+                            <td rowspan="2"><big><strong>QL</strong></big></td>
+                            <td rowspan="2"><?php echo lateDisplay($student["ql_latehours"], $student["ql_submitted"]); ?></td>
+                            <td><strong><?php echo number_format($student["ql_functionality"] /100 * $fullscore["ql_functionality"], 2); ?></strong>/<?php echo $fullscore["ql_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["ql_functionality"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ql_robustness"]    /100 * $fullscore["ql_robustness"]   , 2); ?></strong>/<?php echo $fullscore["ql_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["ql_robustness"]   ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ql_documentation"] /100 * $fullscore["ql_documentation"], 2); ?></strong>/<?php echo $fullscore["ql_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["ql_documentation"]; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ql_design"]        /100 * $fullscore["ql_design"]       , 2); ?></strong>/<?php echo $fullscore["ql_design"];        ?> <br><small class="text-muted">(<?php echo $student["ql_design"]       ; ?>)</small></td>
+                            <td class="text-warning"><?php echo $student["ql_penalty"]; ?>, <?php echo $student["ql_lateperiod_used"]; ?>hrs</td>
+                            <td class="total"><big><strong><?php echo $student["ql_total"]; ?></strong>/<?php echo $fullscore["ql_total_raw"]; ?></big></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($averageStats["ql_total"], 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($stdevStats["ql_total"]  , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($medianStats["ql_total"] , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($maxStats["ql_total"]    , 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="text-center" style="vertical-align:middle;">
+                                <?php if ($student["ql_submitted"] !== "") { ?>
+                                    <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/ql.html">
+                                        Open TA Test Report</a>
+                                <?php } ?>
+                            </td>
+                            <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["ql_comment"]; ?></td>
+                        </tr>
+                        <?php } ?>
+
                         <?php if ($student["ex_proposal_feedback"] != "") { ?>
                         <tr>
                             <td rowspan="1"><big><strong>EX</strong></big></td>
