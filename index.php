@@ -315,6 +315,32 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         </tr>
                         <?php } ?>
 
+                        <?php if ($averageStats["io contest score"] != "") { ?>
+                        <tr>
+                            <td><big><strong>IO Contest</strong></big></td>
+                            <?php if ($student["ql_submitted"] !== "") { ?>
+                            <td colspan="1"></td>
+                            <td colspan="2" class="text-center" style="vertical-align:middle;">
+                                    <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/contest.html">
+                                        Open Contest Result</a>
+                            </td>
+                            <td colspan="4"><big><strong><?php echo $student["io contest score rank"]; ?> place</strong> scoring <?php echo $student["io contest score"]; ?> points</big></td>
+                            <?php } else { ?>
+                            <td><?php echo lateDisplay($student["ql_latehours"], $student["ql_submitted"]); ?></td>
+                            <td colspan="6"></td>
+                            <?php } ?>
+                            <td colspan="4"></td>
+                        </tr>
+                        <?php } ?>
+
+                        <?php if ($student["ex_proposal_feedback"] != "") { ?>
+                        <tr>
+                            <td rowspan="1"><big><strong>EX</strong></big></td>
+                            <td colspan="1" class="text-center" style="vertical-align:top;"><strong>Proposal Feedback</strong></td>
+                            <td colspan="10" style="white-space:pre-wrap;"><?php echo $student["ex_proposal_feedback"]; ?></td>
+                        </tr>
+                        <?php } ?>
+
                         <?php if ($student["ex_proposal_feedback"] != "") { ?>
                         <tr>
                             <td rowspan="1"><big><strong>EX</strong></big></td>
