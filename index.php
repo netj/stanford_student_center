@@ -69,6 +69,9 @@ foreach($students as $stud) {
     if ($stud["sunetid"] == "0_class_fullscore") {
         $fullscore = $stud;
     }
+    if ($stud["sunetid"] == "0_class_weight") {
+        $weights = $stud;
+    }
     if ($stud["sunetid"] == "0_class_avg") {
         $averageStats = $stud;
     }
@@ -172,9 +175,10 @@ Check out your grades, as well as late periods used. If there are any discrepanc
 
 <?php { ?>
 
+    <?php if (!$student["scores finalized"]) { ?>
     <div class="row-fluid">
         <div class="span12">
-		<h3>Late Periods</h3>
+	    <h3>Late Periods</h3>
             <?php
             $late_hours = $student["lateperiod_used"];
             if ($late_hours == 0)       {$alertType = "alert-success"; $alertMessage = "Yay!";}
@@ -187,10 +191,72 @@ Check out your grades, as well as late periods used. If there are any discrepanc
             </div>
         </div>
     </div>
+    <?php } else { ?>
 
     <div class="row-fluid">
         <div class="span12">
-            <div class="hero-unit">
+	    <h3>Final Score</h3>
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>RM</th>
+                            <th>IX</th>
+                            <th>Quiz</th>
+                            <th>SM</th>
+                            <th>QL</th>
+                            <th>EX</th>
+                            <th>Class Participation</th>
+                            <th>Grade Boost</th>
+                            <th class="total"><big>Total</big></th>
+                            <th class="stat">Class Average</th>
+                            <th class="stat">Class StDev.</th>
+                            <th class="stat">Class Median</th>
+                            <th class="stat">Class Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total</td>
+                            <td><a href="#rm"     ><?php echo number_format(100 * $student["rm_total"]   / $fullscore["rm_total"]  , 2); ?>% <small>(<?php echo $student["rm_total"]  ; ?>/<?php echo $fullscore["rm_total"]  ; ?>)</small></a></td>
+                            <td><a href="#ix"     ><?php echo number_format(100 * $student["ix_total"]   / $fullscore["ix_total"]  , 2); ?>% <small>(<?php echo $student["ix_total"]  ; ?>/<?php echo $fullscore["ix_total"]  ; ?>)</small></a></td>
+                            <td><a href="#quiz"   ><?php echo number_format(100 * $student["quiz_total"] / $fullscore["quiz_total"], 2); ?>% <small>(<?php echo $student["quiz_total"]; ?>/<?php echo $fullscore["quiz_total"]; ?>)</small></a></td>
+                            <td><a href="#sm"     ><?php echo number_format(100 * $student["sm_total"]   / $fullscore["sm_total"]  , 2); ?>% <small>(<?php echo $student["sm_total"]  ; ?>/<?php echo $fullscore["sm_total"]  ; ?>)</small></a></td>
+                            <td><a href="#ql"     ><?php echo number_format(100 * $student["ql_total"]   / $fullscore["ql_total"]  , 2); ?>% <small>(<?php echo $student["ql_total"]  ; ?>/<?php echo $fullscore["ql_total"]  ; ?>)</small></a></td>
+                            <td><a href="#ex"     ><?php echo number_format(100 * $student["ex_total"]   / $fullscore["ex_total"]  , 2); ?>% <small>(<?php echo $student["ex_total"]  ; ?>/<?php echo $fullscore["ex_total"]  ; ?>)</small></a></td>
+                            <td><?php echo $student["class participation"]; ?></td>
+                            <td><a href="#contest"><?php echo $student["io contest grade boost"]; ?></a></td>
+                            <td class="total"><big><strong><?php echo $student["total weighted sum score"]; ?></strong>/<?php echo $fullscore["total weighted sum score"]; ?></big></td>
+                            <td class="stat"><?php echo number_format($averageStats["total weighted sum score"], 2); ?></td>
+                            <td class="stat"><?php echo number_format($stdevStats["total weighted sum score"]  , 2); ?></td>
+                            <td class="stat"><?php echo number_format($medianStats["total weighted sum score"] , 2); ?></td>
+                            <td class="stat"><?php echo number_format($maxStats["total weighted sum score"]    , 2); ?></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><small>Weights</small></td>
+                            <td><small><?php echo $weights["rm_total"]                ; ?></small></td>
+                            <td><small><?php echo $weights["ix_total"]                ; ?></small></td>
+                            <td><small><?php echo $weights["quiz_total"]              ; ?></small></td>
+                            <td><small><?php echo $weights["sm_total"]                ; ?></small></td>
+                            <td><small><?php echo $weights["ql_total"]                ; ?></small></td>
+                            <td><small><?php echo $weights["ex_total"]                ; ?></small></td>
+                            <td><small><?php echo $weights["class participation"]     ; ?></small></td>
+                            <td></td>
+                            <td><small><?php echo $weights["total weighted sum score"]; ?></small></td>
+                            <td colspan="4"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+        </div>
+    </div>
+    <hr>
+
+    <?php } ?>
+
+    <div class="row-fluid">
+        <div class="span12">
                 <h3>Project</h3>
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
@@ -211,10 +277,10 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                     </thead>
                     <tbody>
 
-                        <?php if ($student["rm_total"] != "") { ?>
-                        <tr>
+                        <tr id="rm">
                             <td rowspan="2"><big><strong>RM</strong></big></td>
                             <td rowspan="2"><?php echo lateDisplay($student["rm_latehours"], $student["rm_submitted"]); ?></td>
+                        <?php if ($student["rm_total"] != "") { ?>
                             <td><strong><?php echo number_format($student["rm_functionality"] /100 * $fullscore["rm_functionality"], 2); ?></strong>/<?php echo $fullscore["rm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["rm_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_robustness"]    /100 * $fullscore["rm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["rm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["rm_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["rm_documentation"] /100 * $fullscore["rm_documentation"], 2); ?></strong>/<?php echo $fullscore["rm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["rm_documentation"]; ?>)</small></td>
@@ -234,13 +300,15 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                 <?php } ?>
                             </td>
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["rm_comment"]; ?></td>
-                        </tr>
+                        <?php } else {?>
+                        </tr><tr><td colspan="6"></td><td colspan="4"></td>
                         <?php } ?>
+                        </tr>
 
-                        <?php if ($student["ix_total"] != "") { ?>
-                        <tr>
+                        <tr id="ix">
                             <td rowspan="2"><big><strong>IX</strong></big></td>
                             <td rowspan="2"><?php echo lateDisplay($student["ix_latehours"], $student["ix_submitted"]); ?></td>
+                        <?php if ($student["ix_total"] != "") { ?>
                             <td><strong><?php echo number_format($student["ix_functionality"] /100 * $fullscore["ix_functionality"], 2); ?></strong>/<?php echo $fullscore["ix_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["ix_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["ix_robustness"]    /100 * $fullscore["ix_robustness"]   , 2); ?></strong>/<?php echo $fullscore["ix_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["ix_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["ix_documentation"] /100 * $fullscore["ix_documentation"], 2); ?></strong>/<?php echo $fullscore["ix_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["ix_documentation"]; ?>)</small></td>
@@ -260,13 +328,15 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                 <?php } ?>
                             </td>
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["ix_comment"]; ?></td>
-                        </tr>
+                        <?php } else {?>
+                        </tr><tr><td colspan="6"></td><td colspan="4"></td>
                         <?php } ?>
+                        </tr>
 
-                        <?php if ($student["sm_total"] != "") { ?>
-                        <tr>
+                        <tr id="sm">
                             <td rowspan="2"><big><strong>SM</strong></big></td>
                             <td rowspan="2"><?php echo lateDisplay($student["sm_latehours"], $student["sm_submitted"]); ?></td>
+                        <?php if ($student["sm_total"] != "") { ?>
                             <td><strong><?php echo number_format($student["sm_functionality"] /100 * $fullscore["sm_functionality"], 2); ?></strong>/<?php echo $fullscore["sm_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["sm_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["sm_robustness"]    /100 * $fullscore["sm_robustness"]   , 2); ?></strong>/<?php echo $fullscore["sm_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["sm_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["sm_documentation"] /100 * $fullscore["sm_documentation"], 2); ?></strong>/<?php echo $fullscore["sm_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["sm_documentation"]; ?>)</small></td>
@@ -286,13 +356,15 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                 <?php } ?>
                             </td>
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["sm_comment"]; ?></td>
-                        </tr>
+                        <?php } else {?>
+                        </tr><tr><td colspan="6"></td><td colspan="4"></td>
                         <?php } ?>
+                        </tr>
 
-                        <?php if ($student["ql_total"] != "") { ?>
-                        <tr>
+                        <tr id="ql">
                             <td rowspan="2"><big><strong>QL</strong></big></td>
                             <td rowspan="2"><?php echo lateDisplay($student["ql_latehours"], $student["ql_submitted"]); ?></td>
+                        <?php if ($student["ql_total"] != "") { ?>
                             <td><strong><?php echo number_format($student["ql_functionality"] /100 * $fullscore["ql_functionality"], 2); ?></strong>/<?php echo $fullscore["ql_functionality"]; ?> <br><small class="text-muted">(<?php echo $student["ql_functionality"]; ?>)</small></td>
                             <td><strong><?php echo number_format($student["ql_robustness"]    /100 * $fullscore["ql_robustness"]   , 2); ?></strong>/<?php echo $fullscore["ql_robustness"];    ?> <br><small class="text-muted">(<?php echo $student["ql_robustness"]   ; ?>)</small></td>
                             <td><strong><?php echo number_format($student["ql_documentation"] /100 * $fullscore["ql_documentation"], 2); ?></strong>/<?php echo $fullscore["ql_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["ql_documentation"]; ?>)</small></td>
@@ -312,11 +384,12 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                 <?php } ?>
                             </td>
                             <td colspan="4" style="white-space:pre-wrap;"><?php echo $student["ql_comment"]; ?></td>
-                        </tr>
+                        <?php } else {?>
+                        </tr><tr><td colspan="6"></td><td colspan="4"></td>
                         <?php } ?>
+                        </tr>
 
-                        <?php if ($averageStats["io contest score"] != "") { ?>
-                        <tr>
+                        <tr id="contest">
                             <td><big><strong>IO Contest</strong></big></td>
                             <?php if ($student["ql_submitted"] !== "") { ?>
                             <td colspan="1"></td>
@@ -324,41 +397,22 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                                     <a class="btn btn-sm btn-default btn-primary" href="results/<?php echo $student["sunetid"]; ?>/contest.html">
                                         Open Contest Result</a>
                             </td>
-                            <td colspan="4"><big><strong><?php echo $student["io contest score rank"]; ?> place</strong> scoring <?php echo $student["io contest score"]; ?> points</big></td>
+                            <td colspan="4"><big><strong><?php echo $student["io contest score rank"]; ?> place</strong> scoring <?php echo $student["io contest score"]; ?> points</big>
+                                <div style="white-space:pre-wrap;"><?php echo $student["io contest comment"]; ?></div>
+                            </td>
                             <?php } else { ?>
                             <td><?php echo lateDisplay($student["ql_latehours"], $student["ql_submitted"]); ?></td>
                             <td colspan="6"></td>
                             <?php } ?>
                             <td colspan="4"></td>
                         </tr>
-                        <?php } ?>
-
-                        <?php if ($student["ex_proposal_feedback"] != "") { ?>
-                        <tr>
-                            <td rowspan="1"><big><strong>EX</strong></big></td>
-                            <td colspan="1" class="text-center" style="vertical-align:top;"><strong>Proposal Feedback</strong></td>
-                            <td colspan="10" style="white-space:pre-wrap;"><?php echo $student["ex_proposal_feedback"]; ?></td>
-                        </tr>
-                        <?php } ?>
-
-                        <?php if ($student["ex_proposal_feedback"] != "") { ?>
-                        <tr>
-                            <td rowspan="1"><big><strong>EX</strong></big></td>
-                            <td colspan="1" class="text-center" style="vertical-align:top;"><strong>Proposal Feedback</strong></td>
-                            <td colspan="10" style="white-space:pre-wrap;"><?php echo $student["ex_proposal_feedback"]; ?></td>
-                        </tr>
-                        <?php } ?>
 
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
 
-    <div class="row-fluid">
-        <div class="span12">
-            <div class="hero-unit">
-                <h3>Quiz</h3>
+                <?php if ($student["quiz"] != "") { ?>
+                <hr>
+                <h3 id="quiz">Quiz</h3>
                 <table class="table table-hover table-bordered table-striped">
                     <thead>
                         <tr>
@@ -376,7 +430,6 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if ($student["quiz"] != "") { ?>
                         <tr>
                             <td><big><strong><?php echo $student["quiz"]; ?></strong>/<?php echo $fullscore["quiz"]; ?></big></td>
                             <td class="stat"><?php echo number_format($averageStats["quiz"], 2); ?></td>
@@ -390,10 +443,55 @@ Check out your grades, as well as late periods used. If there are any discrepanc
                             <td class="stat"><?php echo number_format($medianStats["quiz_bonus"] , 2); ?></td>
                             <td class="stat"><?php echo number_format($maxStats["quiz_bonus"]    , 2); ?></td>
                         </tr>
-                        <?php } ?>
                     </tbody>
                 </table>
-            </div>
+                <?php } ?>
+
+                <?php if ($student["ex_proposal_feedback"] != "") { ?>
+                <hr>
+                <h3 id="ex">Project Extension</h3>
+                <table class="table table-hover table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Part</th>
+                            <th>Completeness</th>
+                            <th>Presentation</th>
+                            <th>Documentation</th>
+                            <th>Difficulty</th>
+                            <th class="total"><big>Total</big></th>
+                            <th class="stat">Class Average</th>
+                            <th class="stat">Class StDev.</th>
+                            <th class="stat">Class Median</th>
+                            <th class="stat">Class Max</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($student["ex_total"] != "") { ?>
+                        <tr>
+                            <td rowspan="2"><big><strong>EX Demo</strong></big></td>
+                            <td><strong><?php echo number_format($student["ex_completeness"]  /100 * $fullscore["ex_completeness"] , 2); ?></strong>/<?php echo $fullscore["ex_completeness"] ; ?> <br><small class="text-muted">(<?php echo $student["ex_completeness"]  ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ex_presentation"]  /100 * $fullscore["ex_presentation"] , 2); ?></strong>/<?php echo $fullscore["ex_presentation"] ; ?> <br><small class="text-muted">(<?php echo $student["ex_presentation"]  ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ex_documentation"] /100 * $fullscore["ex_documentation"], 2); ?></strong>/<?php echo $fullscore["ex_documentation"]; ?> <br><small class="text-muted">(<?php echo $student["ex_documentation"] ; ?>)</small></td>
+                            <td><strong><?php echo number_format($student["ex_difficulty"]    /100 * $fullscore["ex_difficulty"]   , 2); ?></strong>/<?php echo $fullscore["ex_difficulty"]   ; ?> <br><small class="text-muted">(<?php echo $student["ex_difficulty"]    ; ?>)</small></td>
+                            <td class="total"><big><strong><?php echo $student["ex_total"]; ?></strong>/<?php echo $fullscore["ex_total"]; ?></big></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($averageStats["ex_total"], 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($stdevStats["ex_total"]  , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($medianStats["ex_total"] , 2); ?></td>
+                            <td rowspan="2" class="stat"><?php echo number_format($maxStats["ex_total"]    , 2); ?></td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" style="white-space:pre-wrap;"><?php echo $student["ex_comment"]; ?></td>
+                        </tr>
+                        <?php } ?>
+
+                        <tr>
+                            <td rowspan="1"><big><strong>EX Proposal</strong></big></td>
+                            <td colspan="9" style="white-space:pre-wrap;"><?php echo $student["ex_proposal_feedback"]; ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <?php } ?>
+
         </div>
     </div>
 
