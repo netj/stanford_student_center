@@ -8,7 +8,7 @@ Grades can be entered by teaching staff in the Google Doc, and changes will be r
 (Note: if Google does not republish automatically each time a change is made, you also have to republish manually.)
 
 ## Installation
-- Create a new Google Spreadsheet, and import data from ``sample/sample.csv''. This has all the column headers that index.php will be looking for (and more).
+- Make a copy of this [fresh template sheet for CS 346 Student Center](https://docs.google.com/spreadsheet/ccc?key=0AsFqly5ZIs8LdEYxTjYxTzVsUW1pRVp3a2pjaFRKb2c). This has all the column headers that index.php will be looking for (and more).
 - Set the sharing settings to be "Anyone with the link", and enable "Publish to the web". Note the document key that you later have to enter in ``constants.php''.
 - Edit ``constants.php'' to reflect the class you want to use student center for.
 - Upload the website (i.e. the contents of this folder) to the cgi-bin folder on Corn (note that .htaccess enables WebAuth).
